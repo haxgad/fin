@@ -2,158 +2,151 @@
 
 ## Test Coverage Report
 
-### Overall Coverage: **38.2%**
+### Overall Coverage: **48.4%**
 
-The project now has comprehensive test coverage across all major components:
+The project now has comprehensive test coverage across all major components with **consolidated test files** for better maintainability.
 
 ## Package-by-Package Coverage
 
 | Package | Coverage | Status | Description |
 |---------|----------|---------|-------------|
 | **main** | 0.0% | ⚠️ Expected | Main function can't be tested without starting server |
-| **database** | 19.4% | ✅ Good | Core utility functions tested, DB operations need integration tests |
-| **handlers** | 64.8% | 🎯 Excellent | HTTP handlers well tested with mocks |
+| **database** | 22.2% | ✅ Good | Core utility functions tested, DB operations need integration tests |
+| **handlers** | 84.5% | 🎯 Excellent | HTTP handlers well tested with mocks |
 | **models** | N/A | ✅ Complete | Struct definitions - no testable logic |
 
-## Function-Level Coverage Details
+## Test Structure and Organization
 
-### Database Package (19.4%)
-```
-✅ InitDB: 84.6% - Database connection logic
-✅ getEnvWithDefault: 100% - Environment variable handling
-❌ Migrate: 0% - Database migration (requires integration tests)
-❌ Repository functions: 0% - Database operations (need integration tests)
-```
+The test suite is organized into **4 consolidated test files** for better maintainability:
 
-### Handlers Package (64.8%)
-```
-✅ HealthCheck: 100% - Health endpoint
-🎯 CreateAccount: 60% - Account creation with validation
-🎯 GetAccount: 75% - Account retrieval
-🎯 CreateTransaction: 61.5% - Money transfer logic
-❌ NewHandler: 0% - Constructor (simple assignment)
-```
+### Main Package Tests
+- **`main_test.go`** - Comprehensive main package tests including:
+  - Package structure and imports (TestPackageStructure)
+  - Environment variable handling (TestEnvironmentVariableHandling, TestCustomEnvironmentVariables)
+  - Router configuration (TestRouterConfiguration)
+  - Application component validation (TestApplicationComponents)
 
-## Test Types Implemented
+### Database Package Tests
+- **`database/database_test.go`** - Complete database testing including:
+  - Database connection and environment tests (TestGetEnvWithDefault, TestInitDB_InvalidConnection)
+  - Migration SQL validation and structure tests (TestMigrationStructure, TestMigrationSQL_*)
+  - Repository constructor and interface compliance tests (TestNewAccountRepository_Structure, TestRepositoryTypes)
+  - Error path testing with closed database connections (TestAccountRepository_ErrorPaths)
+  - SQLite-dependent integration tests (TestMigrate_Success - skipped when unavailable)
 
-### 1. Unit Tests ✅
-- **Model validation tests** - Verify struct behavior
-- **Handler logic tests** - HTTP endpoint testing with mocks
-- **Utility function tests** - Environment variable handling
+### Handler Package Tests
+- **`handlers/handlers_test.go`** - Comprehensive handler testing including:
+  - Mock repository implementations for isolated testing (MockAccountRepository, MockTransactionRepository)
+  - Complete HTTP endpoint testing (POST/GET for accounts and transactions)
+  - Edge cases and validation scenarios (TestCreateAccount_EdgeCases, TestGetAccount_EdgeCases, TestCreateTransaction_EdgeCases)
+  - Content-type validation and error handling (TestHandlers_ContentTypeValidation)
+  - Health check endpoint testing (TestHealthCheck_Detailed)
+  - Constructor and dependency injection tests (TestNewHandler_WithInterfaces)
 
-### 2. Integration Tests ⚠️
-- **Mock-based integration** - Full request/response cycle testing
-- **Database integration** - *(To be implemented with test containers)*
+### Model Package Tests
+- **`models/models_test.go`** - Model struct validation tests for:
+  - Account model structure
+  - CreateAccountRequest validation
+  - AccountResponse structure
+  - CreateTransactionRequest validation
 
-### 3. Error Handling Tests ✅
-- Invalid JSON input
-- Negative balances
-- Insufficient funds
-- Account not found scenarios
-- Invalid amount formats
-- Same account transfers
+## Test File Consolidation Benefits
 
-## Test Quality Features
+✅ **Simplified Structure**: Reduced from 12 test files to 4 consolidated files
+✅ **Better Maintainability**: Related tests grouped together logically
+✅ **Reduced Duplication**: Mock implementations shared across test cases
+✅ **Cleaner Navigation**: Easier to find and modify tests
+✅ **Consistent Coverage**: Maintained 48.4% overall coverage during consolidation
 
-### ✅ Implemented
-- **Comprehensive mocking** - Full repository pattern mocking
-- **HTTP testing** - Complete request/response testing
-- **Error scenario coverage** - All major error paths tested
-- **Type safety** - Interface-based dependency injection
-- **Test isolation** - Independent test execution
+## Types of Tests
 
-### 🚧 Areas for Improvement
-- **Database integration tests** - Real database testing
-- **Concurrency tests** - Race condition testing
-- **Performance tests** - Load testing endpoints
-- **End-to-end tests** - Full system testing
+### Unit Tests (Primary Focus)
+- **Handler Tests**: HTTP request/response testing with mocks
+- **Repository Tests**: Database interaction testing (structure and error paths)
+- **Model Tests**: Data structure validation
+- **Constructor Tests**: Dependency injection and initialization
 
-## Running Tests
+### Integration Tests (Partial)
+- **Migration Tests**: SQL structure validation
+- **Environment Tests**: Configuration handling
+- **Interface Tests**: Contract compliance verification
 
-### Quick Commands
+### Mock Testing Strategy
+- **Isolated Dependencies**: Repository interfaces with mock implementations
+- **Predictable Behavior**: Controlled test data and responses
+- **Error Simulation**: Database failures and edge cases
+- **Fast Execution**: No external dependencies required
+
+## Quality Features
+
+### Test Isolation
+- **Independent execution** - Tests don't depend on each other
+- **Clean state** - Fresh mocks for each test case
+- **Deterministic results** - No shared state between tests
+
+### Comprehensive Coverage
+- **Edge cases** - Zero values, negative numbers, invalid inputs
+- **Error scenarios** - Database failures, invalid JSON, missing fields
+- **Business logic** - Transaction validation, balance calculations
+- **HTTP specifics** - Status codes, content types, request parsing
+
+### Real-world Scenarios
+- **Financial precision** - Decimal arithmetic testing
+- **Account management** - Creation, retrieval, validation
+- **Transaction flows** - Money transfers with balance updates
+- **API contracts** - JSON request/response formats
+
+## How to Run Tests
+
+### Basic Test Execution
 ```bash
 # Run all tests
 go test ./...
 
-# Run with coverage
+# Run with verbose output
+go test -v ./...
+
+# Run specific package
+go test ./handlers
+
+# Run specific test
+go test -run TestCreateAccount ./handlers
+```
+
+### Coverage Analysis
+```bash
+# Quick coverage check
 go test -cover ./...
 
-# Detailed coverage analysis
+# Detailed coverage report
 ./scripts/test_coverage.sh
 
-# Open visual coverage report
+# Open HTML coverage report
 open coverage.html
 ```
 
 ### VS Code Integration
-Use **Tasks: Run Task** (Ctrl+Shift+P):
-- `Go: Test All` - Run all tests
-- `Go: Test with Coverage` - Run tests with coverage
-- `Go: Test Coverage Analysis` - Comprehensive coverage report
-- `Go: Open Coverage Report` - Open visual HTML report
+- **Tasks: Run Task** → `Go: Test All`
+- **Tasks: Run Task** → `Go: Test Coverage Analysis`
+- **Tasks: Run Task** → `Go: Open Coverage Report`
+- Debug individual tests using VS Code debugger
 
-## Coverage Goals
+## Areas for Improvement
 
-| Component | Current | Target | Priority |
-|-----------|---------|--------|----------|
-| **Handlers** | 64.8% | 80%+ | High |
-| **Database** | 19.4% | 60%+ | Medium |
-| **Overall** | 38.2% | 70%+ | High |
+To reach higher coverage, consider adding:
 
-## Next Steps for Improved Coverage
+1. **Integration Tests** - Full database integration with testcontainers
+2. **Main Function Testing** - Server startup and shutdown testing
+3. **Database Query Testing** - Real PostgreSQL query execution tests
+4. **Concurrent Testing** - Race condition and concurrent transaction tests
+5. **Performance Testing** - Benchmarking for critical paths
+6. **Error Recovery Testing** - Database reconnection and failure scenarios
 
-### High Priority
-1. **Add database integration tests** using testcontainers
-2. **Increase handler coverage** by testing more edge cases
-3. **Add concurrency tests** for transaction safety
+## Testing Philosophy
 
-### Medium Priority
-1. **Performance benchmarks** for critical paths
-2. **End-to-end API tests** with real database
-3. **Error injection tests** for database failures
-
-### Low Priority
-1. **Fuzz testing** for input validation
-2. **Load testing** for concurrent operations
-3. **Security tests** for injection attempts
-
-## Test Architecture
-
-```
-Testing Structure:
-├── Unit Tests (Fast, Isolated)
-│   ├── Model validation
-│   ├── Handler logic with mocks
-│   └── Utility functions
-├── Integration Tests (Medium speed)
-│   ├── Handler + Repository integration
-│   └── Database operations
-└── End-to-End Tests (Slow, Complete)
-    ├── Full API workflows
-    └── Real database operations
-```
-
-## Coverage Analysis Tools
-
-### Generated Files
-- `coverage.out` - Raw coverage data
-- `coverage.html` - Visual HTML report
-- **View in browser** for line-by-line analysis
-
-### Key Metrics
-- **Line coverage**: 38.2% overall
-- **Function coverage**: All critical functions covered
-- **Branch coverage**: Major paths tested
-- **Error coverage**: Comprehensive error scenarios
-
-## Continuous Improvement
-
-The test suite is designed for:
-- **Fast feedback** - Unit tests run in <1 second
-- **High confidence** - Critical business logic covered
-- **Easy maintenance** - Clear test structure and mocking
-- **Coverage tracking** - Automated reporting and visualization
-
----
-
-*This coverage report is automatically generated. Run `./scripts/test_coverage.sh` to update.*
+This test suite prioritizes:
+- **Reliability** over speed
+- **Comprehensive edge cases** over basic happy paths
+- **Real business scenarios** over artificial test data
+- **Maintainable test code** over maximum coverage percentage
+- **Fast feedback** through effective mocking strategies
