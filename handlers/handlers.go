@@ -15,8 +15,8 @@ import (
 
 // Handler contains the dependencies for HTTP handlers
 type Handler struct {
-	accountRepo     *database.AccountRepository
-	transactionRepo *database.TransactionRepository
+	accountRepo     database.AccountRepositoryInterface
+	transactionRepo database.TransactionRepositoryInterface
 }
 
 // NewHandler creates a new handler with database repositories

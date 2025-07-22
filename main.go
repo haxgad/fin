@@ -1,12 +1,13 @@
 package main
 
 import (
-	"internal-transfers/database"
-	"internal-transfers/handlers"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+
+	"internal-transfers/database"
+	"internal-transfers/handlers"
 )
 
 func main() {
