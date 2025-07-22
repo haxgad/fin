@@ -11,6 +11,9 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Coverage HTML reports
+coverage*.html
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
@@ -37,4 +40,4 @@ Thumbs.db
 
 # Application binary
 transfers
-internal-transfers 
+internal-transfers

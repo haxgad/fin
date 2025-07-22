@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 
@@ -10,23 +11,17 @@ import (
 	"internal-transfers/handlers"
 )
 
-func main() {
-	// Initialize database connection
-	db, err := database.InitDB()
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
+// getPort returns the port to listen on, defaulting to 8080
+func getPort() string {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
-	defer db.Close()
+	return port
+}
 
-	// Run database migrations
-	if err := database.Migrate(db); err != nil {
-		log.Fatal("Failed to run migrations:", err)
-	}
-
-	// Initialize handlers
-	h := handlers.NewHandler(db)
-
-	// Setup routes
+// setupRoutes configures and returns the HTTP router with all endpoints
+func setupRoutes(h *handlers.Handler) *mux.Router {
 	r := mux.NewRouter()
 
 	// Account endpoints
@@ -39,6 +34,41 @@ func main() {
 	// Health check endpoint
 	r.HandleFunc("/health", h.HealthCheck).Methods("GET")
 
-	log.Println("Server starting on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", r))
+	return r
+}
+
+// initializeApp initializes the database connection, runs migrations, and returns a handler
+func initializeApp() (*handlers.Handler, error) {
+	// Initialize database connection
+	db, err := database.InitDB()
+	if err != nil {
+		return nil, err
+	}
+
+	// Run database migrations
+	if err := database.Migrate(db); err != nil {
+		db.Close()
+		return nil, err
+	}
+
+	// Initialize handlers
+	h := handlers.NewHandler(db)
+	return h, nil
+}
+
+func main() {
+	// Initialize the application
+	h, err := initializeApp()
+	if err != nil {
+		log.Fatal("Failed to initialize application:", err)
+	}
+
+	// Setup routes
+	r := setupRoutes(h)
+
+	// Get port
+	port := getPort()
+
+	log.Printf("Server starting on port %s...", port)
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
