@@ -1,0 +1,101 @@
+### Internal Transfers API Testing
+### Make sure the server is running on http://localhost:8080
+
+@baseUrl = http://localhost:8080
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Create Account 123
+POST {{baseUrl}}/accounts
+Content-Type: application/json
+
+{
+  "account_id": 123,
+  "initial_balance": "1000.00"
+}
+
+### Create Account 456
+POST {{baseUrl}}/accounts
+Content-Type: application/json
+
+{
+  "account_id": 456,
+  "initial_balance": "500.50"
+}
+
+### Get Account 123 Balance
+GET {{baseUrl}}/accounts/123
+
+### Get Account 456 Balance
+GET {{baseUrl}}/accounts/456
+
+### Transfer Money from 123 to 456
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+
+{
+  "source_account_id": 123,
+  "destination_account_id": 456,
+  "amount": "100.25"
+}
+
+### Check Account 123 Balance After Transfer
+GET {{baseUrl}}/accounts/123
+
+### Check Account 456 Balance After Transfer
+GET {{baseUrl}}/accounts/456
+
+### Test Error Cases
+
+### Try to get non-existent account
+GET {{baseUrl}}/accounts/999
+
+### Try to create duplicate account
+POST {{baseUrl}}/accounts
+Content-Type: application/json
+
+{
+  "account_id": 123,
+  "initial_balance": "100.00"
+}
+
+### Try transaction with insufficient balance
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+
+{
+  "source_account_id": 456,
+  "destination_account_id": 123,
+  "amount": "10000.00"
+}
+
+### Try transaction with invalid amount
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+
+{
+  "source_account_id": 123,
+  "destination_account_id": 456,
+  "amount": "invalid"
+}
+
+### Try transaction with negative amount
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+
+{
+  "source_account_id": 123,
+  "destination_account_id": 456,
+  "amount": "-50.00"
+}
+
+### Try self-transfer
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+
+{
+  "source_account_id": 123,
+  "destination_account_id": 123,
+  "amount": "50.00"
+}
