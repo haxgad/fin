@@ -1,6 +1,6 @@
 # Internal Transfers System
 
-A robust financial transaction system built with Go that facilitates secure money transfers between accounts through HTTP endpoints, featuring comprehensive testing and excellent code coverage.
+A robust financial transaction system built with Go that facilitates secure money transfers between accounts through HTTP endpoints, featuring testing and code coverage.
 
 ## Features
 
@@ -10,7 +10,7 @@ A robust financial transaction system built with Go that facilitates secure mone
 - **High Precision**: Decimal arithmetic for accurate financial calculations using `shopspring/decimal`
 - **Comprehensive Error Handling**: Detailed validation and error responses
 - **Health Monitoring**: Built-in health check endpoint
-- **Excellent Test Coverage**: 66.1% overall coverage with 88.7% coverage for core business logic
+- **Test Coverage**: 66.1% overall coverage with 88.7% coverage for core business logic
 - **Thread-Safe**: Concurrent request handling with proper synchronization
 - **IDE Ready**: Full VS Code integration with debugging and testing support
 
@@ -262,8 +262,8 @@ The system provides comprehensive error handling for:
 ## Testing & Quality Assurance
 
 ### Test Coverage Summary
-- **Overall Coverage**: **66.1%** 🎯 *Exceeds industry standards*
-- **Core Business Logic**: **88.7%** ✅ *Excellent coverage*
+- **Overall Coverage**: **66.1%** 🎯
+- **Core Business Logic**: **88.7%** ✅ *Decent coverage*
 - **Application Infrastructure**: **60.0%** ✅ *Good coverage*
 - **Data Layer**: **45.8%** ⚠️ *Moderate coverage*
 
